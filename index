@@ -1,0 +1,176 @@
+const { Client, Intents } = require("discord.js-selfbot");
+const client = new Client({
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+  ],
+});
+
+let token = "TOKEN";
+
+client.on("ready", () => {
+  console.log("Ok!");
+  console.log(`Logged in as ${client.user.tag}!`); //u information
+  client.user.setActivity("visual studio code"); //Playing visual studio code
+});
+const list = require("./list.json"); //file where the channel lists come from
+let ListChannels = list.ListChannels; //u channels id
+let kakera_min = 200; //minimum for kakera claim
+let waitheart = 600; //how long will you wait if it has a heart emoji
+let noheart = 1; //how long will you wait if you don't have a heart
+let kakera_claim; //kakera value
+let character; //character lol
+let have_heart; //if the embed have heart emoji
+
+client.on("message", (message) => {
+  let kakerao = "605112954391887888"; //ID of kakera orange
+  let kakerar = "605112980295647242"; //ID of kakera Red
+  let kakeraw = "608192076286263297"; //ID of kakera rainbow
+
+  const filterk = (reaction, user) => {
+    return (
+      [kakerao, kakerar, kakeraw].includes(reaction.emoji.id) &&
+      user.id == message.author.id
+    );
+  };
+  message.awaitReactions(filterk, { max: 1 }).then((collection) => {
+    const reaction = collection.first();
+
+    if (reaction.emoji.id === "605112954391887888") {
+      //emoji ID of kakera orange
+      setTimeout(function () {
+        message.react(":kakeraO:605112954391887888"); // react kakera orange
+        console.log("Kakera orange");
+      }, 450); //wait 0.450s
+    } else if (reaction.emoji.id === "605112980295647242") {
+      setTimeout(function () {
+        message.react(":kakeraR:605112980295647242");
+        console.log("Kakera Red");
+      }, 450);
+    } else if (reaction.emoji.id === "608192076286263297") {
+      setTimeout(function () {
+        message.react(":kakeraW:608192076286263297");
+        console.log("Kakera Rainbow");
+      }, 450);
+    }
+  });
+
+  let heart = "❤"; //normal emojis have no ID
+  let sparkling_heart = "💖";
+  let cupid = "💘";
+  let two_hearts = "💕";
+  let heartbeat = "💓";
+  let heartpulse = "💗";
+  let hearts = "♥";
+
+  const filter = (reaction, user) => {
+    return (
+      [
+        heart,
+        sparkling_heart,
+        cupid,
+        two_hearts,
+        heartbeat,
+        heartpulse,
+        hearts,
+      ].includes(reaction.emoji.name) && user.id == message.author.id
+    );
+  };
+  message.awaitReactions(filter, { max: 1 }).then((collection) => {
+    const reaction = collection.first();
+
+    if (reaction.emoji.name === heart) {
+      have_heart = heart; //If the embed had an emote, that emote will be added to have_heart
+    } else if (reaction.emoji.name === sparkling_heart) {
+      have_heart = sparkling_heart;
+    } else if (reaction.emoji.name === cupid) {
+      have_heart = cupid;
+    } else if (reaction.emoji.name === two_hearts) {
+      have_heart = two_hearts;
+    } else if (reaction.emoji.name === heartbeat) {
+      have_heart = heartbeat;
+    } else if (reaction.emoji.name === heartpulse) {
+      have_heart = heartpulse;
+    } else if (reaction.emoji.name === hearts) {
+      have_heart = hearts;
+    }
+  });
+  setTimeout(function () {
+    if (ListChannels.includes(message.channel.id)) {
+      //channel filter
+      if (message.author.id === "432610292342587392") {
+        //ID of mudae 432610292342587392
+        if (message.embeds.length >= 0) {
+          // Check if the Message has embed or not
+          let embed = message.embeds;
+          // console.log(embed) look at the embed message
+          for (let i = 0; i < embed.length; i++) {
+            if (embed[i] && embed[i].author && embed[i].author.name !== null) {
+              // check each embed if it has author.name or not
+              if (embed[i] && embed[i].description) {
+                if (
+                  embed[i] &&
+                  embed[i].footer &&
+                  embed[i].footer.text !== null
+                ) {
+                  if (/\W{3}\d{2,4}\Wka/.test(embed[i].footer.text) === true) {
+                    let filter_kakera = parseInt(
+                      embed[i].footer.text
+                        .match(/\W{3}\d{2,4}\Wka/)
+                        .toString()
+                        .match(/\d{2,4}/)
+                        .toString()
+                    );
+                    kakera_claim = filter_kakera;
+                    character = embed[i].author.name;
+                  } else if (/ROLLS/.test(embed[i].footer.text) === true) {
+                    let filter_kakera = parseInt(
+                      embed[i].description
+                        .match(/\W{2}\d{2,4}\W{4}kakera:/)
+                        .toString()
+                        .match(/\d{2,4}/)
+                        .toString()
+                    );
+                    kakera_claim = filter_kakera;
+                    character = embed[i].author.name;
+                  }
+                }
+                if (embed[i] && !embed[i].footer) {
+                  if (
+                    /\W{2}\d{2,4}\W{4}kakera:/.test(embed[i].description) ===
+                    true
+                  ) {
+                    let filter_kakera = parseInt(
+                      embed[i].description
+                        .match(/\W{2}\d{2,4}\W{4}kakera:/)
+                        .toString()
+                        .match(/\d{2,4}/)
+                        .toString()
+                    );
+                    kakera_claim = filter_kakera;
+                    character = embed[i].author.name;
+                  }
+                }
+                if (kakera_claim >= kakera_min) {
+                  console.log("C:", character, "K:", kakera_claim);
+                  kakera_claim = 0;
+                  if (have_heart == null) {
+                    setTimeout(function () {
+                      message.react("🙏");
+                    }, noheart);
+                  } else {
+                    message.react(have_heart);
+                    have_heart = null;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }, waitheart);
+});
+
+client.login(token);
