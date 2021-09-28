@@ -4,3 +4,7 @@
 # MudaeAutoClaim
 
 a simple autoself that autoclaim, soon add more details
+
+## Requirements
+
+npm i discord.js-selfbot
