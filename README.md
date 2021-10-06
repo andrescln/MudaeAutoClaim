@@ -8,6 +8,7 @@ a simple autoself that autoclaim, soon add more details
 ## Config
 
 u token
+
 kakera_min: the minimum cost of kakera to claim
 
 ## Requirements
